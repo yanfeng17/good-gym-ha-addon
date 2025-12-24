@@ -148,8 +148,14 @@ class GoodGymService:
                 new_width = int(w * scale)
                 new_height = int(h * scale)
                 frame = cv2.resize(frame, (new_width, new_height))
-                if self.enable_debug and frame_number == 1:
-                    print(f"📏 Resized frame from {w}x{h} to {new_width}x{new_height}")
+                
+                # Log resize for first 3 frames to confirm it's working
+                if self.frame_count <= 3:
+                    print(f"📏 Resized frame from {w}x{h} to {new_width}x{new_height} (max_resolution={self.max_resolution})")
+            else:
+                # Warn if resolution is already small enough
+                if self.frame_count == 1:
+                    print(f"ℹ️  Frame resolution {w}x{h} is already below max_resolution={self.max_resolution}, no resize needed")
             
             # Process frame with RTMPose
             processed_frame = self.rtmpose_processor.process_frame(
