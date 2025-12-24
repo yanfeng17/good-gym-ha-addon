@@ -135,6 +135,9 @@ class GoodGymService:
             frame_number: Frame number
         """
         try:
+            import time as perf_time
+            frame_start = perf_time.time()
+            
             # Skip frames if configured
             if self.frame_skip > 1 and frame_number % self.frame_skip != 0:
                 return
@@ -142,6 +145,7 @@ class GoodGymService:
             self.frame_count += 1
             
             # Resize frame if needed to reduce CPU usage
+            resize_start = perf_time.time()
             h, w = frame.shape[:2]
             if w > self.max_resolution:
                 scale = self.max_resolution / w
@@ -157,11 +161,15 @@ class GoodGymService:
                 if self.frame_count == 1:
                     print(f"ℹ️  Frame resolution {w}x{h} is already below max_resolution={self.max_resolution}, no resize needed")
             
+            resize_time = (perf_time.time() - resize_start) * 1000  # ms
+            
             # Process frame with RTMPose
+            inference_start = perf_time.time()
             processed_frame = self.rtmpose_processor.process_frame(
                 frame,
                 self.exercise_type
             )
+            inference_time = (perf_time.time() - inference_start) * 1000  # ms
             
             # Get current count and stage
             current_count = self.exercise_counter.counter
@@ -190,6 +198,15 @@ class GoodGymService:
                 if count_changed:
                     print(f"✓ Count updated: {current_count} reps (stage: {current_stage})")
                     self.last_count = current_count
+            
+            # Performance logging every 25 frames
+            total_time = (perf_time.time() - frame_start) * 1000  # ms
+            if self.frame_count % 25 == 0:
+                print(f"⏱️  Performance [Frame #{self.frame_count}]:")
+                print(f"   - Resize: {resize_time:.1f}ms")
+                print(f"   - AI Inference: {inference_time:.1f}ms") 
+                print(f"   - Total: {total_time:.1f}ms")
+                print(f"   - Count: {current_count} | Stage: {current_stage}")
             
             # Debug output every 100 frames
             if self.enable_debug and self.frame_count % 100 == 0:
