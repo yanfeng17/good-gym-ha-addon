@@ -47,7 +47,7 @@ class ConfigManager:
             'detection_interval': float(os.getenv('DETECTION_INTERVAL', '0.1')),
             'enable_debug': os.getenv('ENABLE_DEBUG', 'false').lower() == 'true',
             'enable_mqtt_discovery': os.getenv('ENABLE_MQTT_DISCOVERY', 'true').lower() == 'true',
-            'rtmpose_mode': os.getenv('RTMPOSE_MODE', 'balanced'),  # performance, balanced, or accuracy
+            'rtmpose_mode': os.getenv('RTMPOSE_MODE', 'lightweight'),  # lightweight, balanced, or performance
             'reconnect_interval': int(os.getenv('RECONNECT_INTERVAL', '5')),
             'frame_skip': int(os.getenv('FRAME_SKIP', '1')),  # Process every N frames
         }
@@ -73,8 +73,8 @@ class ConfigManager:
             )
         
         # Validate RTMPose mode
-        valid_modes = ['performance', 'balanced', 'accuracy']
-        if self.config.get('rtmpose_mode', 'balanced') not in valid_modes:
+        valid_modes = ['lightweight', 'balanced', 'performance']
+        if self.config.get('rtmpose_mode', 'lightweight') not in valid_modes:
             raise ValueError(
                 f"Invalid rtmpose_mode. Valid options: {', '.join(valid_modes)}"
             )
@@ -107,7 +107,7 @@ class ConfigManager:
         return {
             'exercise_type': self.config['exercise_type'],
             'detection_interval': self.config.get('detection_interval', 0.1),
-            'rtmpose_mode': self.config.get('rtmpose_mode', 'balanced'),
+            'rtmpose_mode': self.config.get('rtmpose_mode', 'lightweight'),
             'frame_skip': self.config.get('frame_skip', 1),
             'enable_debug': self.config.get('enable_debug', False),
         }
