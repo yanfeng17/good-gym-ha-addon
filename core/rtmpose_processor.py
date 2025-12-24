@@ -69,19 +69,20 @@ class RTMPoseProcessor:
                     )
                     print("RTMPose local model initialization successful")
                     return
-                else:
-                    print("Local model files incomplete, using online download")
-            else:
-                print("models directory doesn't exist, using online download")
-                self.wholebody = Wholebody(
-                    mode=mode,
-                    backend=self.backend,
-                    device=self.device
-                )
-                print("RTMPose online model initialization successful")
+            
+            # If we reach here, local models don't exist or are incomplete
+            # Use online download
+            print("Local model files incomplete, using online download")
+            self.wholebody = Wholebody(
+                mode=mode,
+                backend=self.backend,
+                device=self.device
+            )
+            print("RTMPose online model initialization successful")
             
         except Exception as e:
             print(f"RTMPose initialization failed: {e}")
+            raise  # Re-raise to prevent continuing with uninitialized model
 
     def get_keypoint_mapping(self):
         """Get keypoint mapping (COCO 17 keypoint format)"""
