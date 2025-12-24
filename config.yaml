@@ -2,7 +2,7 @@ name: Good-GYM Exercise Tracker
 version: "2.0.0"
 slug: good_gym
 description: AI-powered exercise counter using RTMPose with RTSP camera support and MQTT integration
-url: "https://github.com/yo-WASSUP/Good-GYM"
+url: "https://github.com/yanfeng17/good-gym-ha-addon"
 arch:
   - amd64
   - aarch64
@@ -35,4 +35,3 @@ schema:
   reconnect_interval: int(1,60)
   enable_debug: bool
   enable_mqtt_discovery: bool
-image: "ghcr.io/yanfeng17/good-gym-addon-{arch}"
