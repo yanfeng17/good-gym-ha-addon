@@ -25,7 +25,7 @@ configuration:
     description: 姿态检测间隔时间（秒），数值越小检测越频繁
   rtmpose_mode:
     name: RTMPose 模式
-    description: 检测模式（performance = 快速但精度较低，accuracy = 慢速但精度更高）
+    description: 检测模式（lightweight = 最快，balanced = 平衡，performance = 最慢但最精确）
   frame_skip:
     name: 跳帧间隔
     description: 每次检测之间跳过的帧数（越高CPU占用越低）

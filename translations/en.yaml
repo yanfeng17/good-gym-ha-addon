@@ -25,7 +25,7 @@ configuration:
     description: Time in seconds between pose detections (lower = more frequent)
   rtmpose_mode:
     name: RTMPose Mode
-    description: Detection mode (performance = fast but less accurate, accuracy = slow but more accurate)
+    description: Detection mode (lightweight = fastest, balanced = good balance, performance = slowest but most accurate)
   frame_skip:
     name: Frame Skip
     description: Number of frames to skip between each detection (higher = lower CPU usage)
