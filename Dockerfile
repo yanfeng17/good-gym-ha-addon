@@ -1,37 +1,32 @@
-FROM python:3.11-slim
+FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libgl1 \
+    libgl1-mesa-glx \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     libgomp1 \
     wget \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt /app/requirements.txt
+COPY homeassistant/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy core modules
+# Copy core modules from parent project
 COPY core/ /app/core/
 COPY data/ /app/data/
+COPY models/ /app/models/
 COPY exercise_counters.py /app/
 
 # Copy addon-specific files
-COPY config_manager.py /app/
-COPY rtsp_handler.py /app/
-COPY mqtt_publisher.py /app/
-COPY main.py /app/
-COPY model_downloader.py /app/
+COPY homeassistant/*.py /app/
 
-# Create models directory (models will be downloaded on first run)
-RUN mkdir -p /app/models
-
-# Create data directory for Home Assistant options
 RUN mkdir -p /data
 
 # Set environment variables
