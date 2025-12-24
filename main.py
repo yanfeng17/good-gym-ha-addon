@@ -9,6 +9,18 @@ import signal
 import cv2
 from typing import Optional
 
+# Configure RTMLib cache to use persistent storage BEFORE importing rtmlib
+# This prevents re-downloading models on every restart
+CACHE_DIR = "/data/.cache/rtmlib"
+os.makedirs(CACHE_DIR, exist_ok=True)
+os.makedirs(os.path.join(CACHE_DIR, "hub", "checkpoints"), exist_ok=True)
+
+# Set environment variables for model caching
+os.environ['TORCH_HOME'] = CACHE_DIR
+os.environ['HF_HOME'] = CACHE_DIR
+# RTMLib uses this directory pattern
+os.environ['XDG_CACHE_HOME'] = "/data/.cache"
+
 # Add parent directory to path to import core modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
