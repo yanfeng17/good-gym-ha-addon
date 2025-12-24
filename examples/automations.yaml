@@ -1,0 +1,223 @@
+# Good-GYM Home Assistant Automation Examples
+# 将这些自动化添加到你的 automations.yaml
+
+# 自动化 1: 达到目标次数时发送通知
+- id: good_gym_goal_reached
+  alias: 健身目标达成通知
+  description: 完成预设次数的运动时发送通知
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.good_gym_squat_counter
+      above: 30
+  condition:
+    # 确保今天还没有发送过通知
+    - condition: template
+      value_template: >
+        {{ as_timestamp(now()) - as_timestamp(state_attr('automation.good_gym_goal_reached', 'last_triggered')) > 3600 }}
+  action:
+    - service: notify.mobile_app_your_phone
+      data:
+        title: "🎉 健身目标达成！"
+        message: "恭喜！你完成了 {{ states('sensor.good_gym_squat_counter') }} 个深蹲！"
+        data:
+          push:
+            sound: success
+          actions:
+            - action: "RESET_COUNTER"
+              title: "重置计数"
+
+# 自动化 2: 每次计数增加时播放提示音
+- id: good_gym_count_beep
+  alias: 运动计数提示音
+  description: 每完成一次运动时播放提示音
+  trigger:
+    - platform: state
+      entity_id: sensor.good_gym_squat_counter
+  condition:
+    # 只在计数增加时触发
+    - condition: template
+      value_template: "{{ trigger.to_state.state | int > trigger.from_state.state | int }}"
+  action:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.living_room_speaker
+      data:
+        media_content_id: "media-source://media_source/local/sounds/beep.mp3"
+        media_content_type: "music"
+
+# 自动化 3: 每次运动时智能灯光闪烁
+- id: good_gym_light_flash
+  alias: 运动计数灯光反馈
+  description: 完成动作时灯光闪烁绿色
+  trigger:
+    - platform: state
+      entity_id: sensor.good_gym_squat_counter
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | int > trigger.from_state.state | int }}"
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room
+      data:
+        flash: short
+        rgb_color: [0, 255, 0]
+
+# 自动化 4: 达到里程碑时语音播报
+- id: good_gym_milestone
+  alias: 运动里程碑播报
+  description: 达到 10、20、30 等整数倍时语音播报
+  trigger:
+    - platform: state
+      entity_id: sensor.good_gym_squat_counter
+  condition:
+    - condition: template
+      value_template: "{{ (trigger.to_state.state | int) % 10 == 0 and trigger.to_state.state | int > 0 }}"
+  action:
+    - service: tts.google_translate_say
+      target:
+        entity_id: media_player.living_room_speaker
+      data:
+        message: "已完成 {{ states('sensor.good_gym_squat_counter') }} 个深蹲，继续加油！"
+        language: "zh-CN"
+
+# 自动化 5: 每日运动提醒
+- id: good_gym_daily_reminder
+  alias: 每日运动提醒
+  description: 每天晚上8点提醒健身
+  trigger:
+    - platform: time
+      at: "20:00:00"
+  condition:
+    # 只在今天运动次数少于目标时提醒
+    - condition: numeric_state
+      entity_id: sensor.good_gym_squat_counter
+      below: 30
+  action:
+    - service: notify.mobile_app_your_phone
+      data:
+        title: "⏰ 健身提醒"
+        message: "今天还没完成健身目标哦！当前进度: {{ states('sensor.good_gym_squat_counter') }} / 30"
+
+# 自动化 6: 运动开始时调整灯光和音乐
+- id: good_gym_workout_mode
+  alias: 进入健身模式
+  description: 检测到运动开始时自动调整环境
+  trigger:
+    - platform: state
+      entity_id: sensor.good_gym_squat_counter
+      attribute: stage
+      to: "up"
+  condition:
+    # 确保是新的运动会话（距离上次更新超过5分钟）
+    - condition: template
+      value_template: >
+        {{ as_timestamp(now()) - as_timestamp(states.sensor.good_gym_squat_counter.last_changed) > 300 }}
+  action:
+    # 调整灯光为运动模式
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room
+      data:
+        brightness: 255
+        color_temp: 250
+    # 播放健身音乐
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.spotify
+      data:
+        media_content_id: "spotify:playlist:37i9dQZF1DX76Wlfdnj7AP"
+        media_content_type: "playlist"
+
+# 自动化 7: 每日统计报告
+- id: good_gym_daily_report
+  alias: 每日运动统计报告
+  description: 每天晚上10点发送运动统计
+  trigger:
+    - platform: time
+      at: "22:00:00"
+  action:
+    - service: notify.mobile_app_your_phone
+      data:
+        title: "📊 今日运动报告"
+        message: |
+          今日完成 {{ states('sensor.good_gym_squat_counter') }} 个深蹲
+          {% if states('sensor.good_gym_squat_counter') | int >= 30 %}
+          🎉 恭喜达成目标！
+          {% else %}
+          💪 明天继续加油！
+          {% endif %}
+
+# 自动化 8: 游戏化 - 连击系统
+- id: good_gym_combo_system
+  alias: 运动连击效果
+  description: 连续快速完成动作时给予额外反馈
+  trigger:
+    - platform: state
+      entity_id: sensor.good_gym_squat_counter
+  variables:
+    time_since_last: "{{ as_timestamp(now()) - as_timestamp(trigger.from_state.last_changed) }}"
+  condition:
+    # 在3秒内完成动作视为连击
+    - condition: template
+      value_template: "{{ time_since_last < 3 }}"
+    - condition: template
+      value_template: "{{ trigger.to_state.state | int > trigger.from_state.state | int }}"
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room
+      data:
+        effect: "colorloop"
+    - delay: "00:00:02"
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room
+      data:
+        effect: "none"
+
+# 自动化 9: 记录个人最佳成绩
+- id: good_gym_personal_best
+  alias: 个人最佳记录
+  description: 打破个人记录时发送特殊通知
+  trigger:
+    - platform: state
+      entity_id: sensor.good_gym_squat_counter
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | int > states('input_number.squat_personal_best') | int }}"
+  action:
+    # 更新个人最佳记录
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.squat_personal_best
+      data:
+        value: "{{ trigger.to_state.state | int }}"
+    # 发送庆祝通知
+    - service: notify.mobile_app_your_phone
+      data:
+        title: "🏆 新记录！"
+        message: "恭喜！你打破了个人最佳记录，完成了 {{ trigger.to_state.state }} 个深蹲！"
+        data:
+          push:
+            sound: success
+            badge: 1
+
+# 自动化 10: 休息提醒
+- id: good_gym_rest_reminder
+  alias: 运动休息提醒
+  description: 连续运动一定时间后提醒休息
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.good_gym_squat_counter
+      above: 20
+  condition:
+    # 检查最近10分钟内是否持续运动
+    - condition: template
+      value_template: >
+        {{ as_timestamp(now()) - as_timestamp(states.sensor.good_gym_squat_counter.last_changed) < 600 }}
+  action:
+    - service: notify.mobile_app_your_phone
+      data:
+        title: "💧 休息提醒"
+        message: "你已经完成了 {{ states('sensor.good_gym_squat_counter') }} 个深蹲，注意休息和补水哦！"

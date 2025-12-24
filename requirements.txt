@@ -1,0 +1,14 @@
+# Good-GYM Home Assistant Addon Requirements
+
+# Core dependencies (from original project)
+opencv-python>=4.5.0
+numpy>=1.19.0
+onnxruntime>=1.10.0
+rtmlib
+Pillow>=8.0.0
+
+# MQTT client
+paho-mqtt>=1.6.0
+
+# Additional utilities
+requests>=2.25.0

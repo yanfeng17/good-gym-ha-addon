@@ -1,0 +1,119 @@
+# Good-GYM Home Assistant Dashboard Examples
+# 将这些卡片添加到你的 Home Assistant 仪表板
+
+# 示例 1: 简单计数显示
+- type: entities
+  title: 健身追踪
+  entities:
+    - entity: sensor.good_gym_squat_counter
+      name: 深蹲次数
+      icon: mdi:run
+    - type: attribute
+      entity: sensor.good_gym_squat_counter
+      attribute: stage
+      name: 当前阶段
+    - type: attribute
+      entity: sensor.good_gym_squat_counter
+      attribute: timestamp
+      name: 最后更新
+
+# 示例 2: 进度条显示
+- type: gauge
+  entity: sensor.good_gym_squat_counter
+  min: 0
+  max: 50
+  name: 今日深蹲目标
+  needle: true
+  severity:
+    green: 40
+    yellow: 20
+    red: 0
+
+# 示例 3: 统计图表
+- type: statistics-graph
+  title: 本周运动统计
+  entities:
+    - sensor.good_gym_squat_counter
+  stat_types:
+    - mean
+    - max
+  period:
+    calendar:
+      period: week
+
+# 示例 4: 历史图表
+- type: history-graph
+  title: 运动历史
+  hours_to_show: 24
+  entities:
+    - entity: sensor.good_gym_squat_counter
+
+# 示例 5: 迷你图表 (Mini Graph Card - 需要 HACS)
+- type: custom:mini-graph-card
+  entities:
+    - sensor.good_gym_squat_counter
+  name: 深蹲趋势
+  hours_to_show: 168
+  points_per_hour: 0.25
+  line_color: '#3498db'
+  show:
+    labels: true
+    points: true
+
+# 示例 6: 组合仪表板
+- type: vertical-stack
+  cards:
+    - type: markdown
+      content: |
+        # 🏋️ 今日健身
+        **当前进度**: {{ states('sensor.good_gym_squat_counter') }} / 50 次
+    
+    - type: gauge
+      entity: sensor.good_gym_squat_counter
+      min: 0
+      max: 50
+      needle: true
+    
+    - type: entities
+      entities:
+        - entity: sensor.good_gym_squat_counter
+          name: 总次数
+        - type: attribute
+          entity: sensor.good_gym_squat_counter
+          attribute: stage
+          name: 状态
+        - type: attribute
+          entity: sensor.good_gym_squat_counter
+          attribute: session_start
+          name: 开始时间
+
+# 示例 7: Button Card (需要 HACS - Button Card)
+- type: custom:button-card
+  entity: sensor.good_gym_squat_counter
+  name: 深蹲计数器
+  show_state: true
+  show_icon: true
+  icon: mdi:run
+  styles:
+    card:
+      - height: 100px
+    name:
+      - font-size: 16px
+      - font-weight: bold
+    state:
+      - font-size: 24px
+      - color: '#3498db'
+
+# 示例 8: 多运动显示（如果有多个 addon 实例）
+- type: entities
+  title: 运动汇总
+  entities:
+    - entity: sensor.good_gym_squat_counter
+      name: 深蹲
+      icon: mdi:human-handsdown
+    - entity: sensor.good_gym_pushup_counter
+      name: 俯卧撑
+      icon: mdi:human-handsup
+    - entity: sensor.good_gym_situp_counter
+      name: 仰卧起坐
+      icon: mdi:yoga

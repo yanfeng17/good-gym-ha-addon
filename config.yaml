@@ -1,0 +1,38 @@
+name: Good-GYM Exercise Tracker
+version: "2.0.0"
+slug: good_gym
+description: AI-powered exercise counter using RTMPose with RTSP camera support and MQTT integration
+url: "https://github.com/yo-WASSUP/Good-GYM"
+arch:
+  - amd64
+  - aarch64
+init: false
+options:
+  rtsp_url: "rtsp://192.168.1.100:554/stream"
+  mqtt_host: "core-mosquitto"
+  mqtt_port: 1883
+  mqtt_user: ""
+  mqtt_password: ""
+  mqtt_topic_prefix: "homeassistant/sensor/good_gym"
+  exercise_type: "squat"
+  detection_interval: 0.1
+  rtmpose_mode: "balanced"
+  frame_skip: 1
+  reconnect_interval: 5
+  enable_debug: false
+  enable_mqtt_discovery: true
+schema:
+  rtsp_url: str
+  mqtt_host: str
+  mqtt_port: port
+  mqtt_user: str?
+  mqtt_password: password?
+  mqtt_topic_prefix: str
+  exercise_type: list(squat|pushup|situp|bicep_curl|lateral_raise|overhead_press|leg_raise|knee_raise|knee_press|crunch)
+  detection_interval: float(0.01,1.0)
+  rtmpose_mode: list(performance|balanced|accuracy)
+  frame_skip: int(1,10)
+  reconnect_interval: int(1,60)
+  enable_debug: bool
+  enable_mqtt_discovery: bool
+image: "ghcr.io/yanfeng17/good-gym-addon-{arch}"

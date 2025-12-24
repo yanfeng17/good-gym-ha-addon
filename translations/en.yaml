@@ -1,0 +1,40 @@
+configuration:
+  rtsp_url:
+    name: RTSP Camera URL
+    description: The RTSP URL of your camera (e.g., rtsp://192.168.1.100:554/stream)
+  mqtt_host:
+    name: MQTT Broker Host
+    description: Hostname or IP address of your MQTT broker
+  mqtt_port:
+    name: MQTT Broker Port
+    description: Port number of your MQTT broker (usually 1883)
+  mqtt_user:
+    name: MQTT Username
+    description: Username for MQTT authentication (leave empty if not required)
+  mqtt_password:
+    name: MQTT Password
+    description: Password for MQTT authentication (leave empty if not required)
+  mqtt_topic_prefix:
+    name: MQTT Topic Prefix
+    description: Prefix for MQTT topics
+  exercise_type:
+    name: Exercise Type
+    description: Type of exercise to track
+  detection_interval:
+    name: Detection Interval
+    description: Time in seconds between pose detections (lower = more frequent)
+  rtmpose_mode:
+    name: RTMPose Mode
+    description: Detection mode (performance = fast but less accurate, accuracy = slow but more accurate)
+  frame_skip:
+    name: Frame Skip
+    description: Process every Nth frame (higher = lower CPU usage but may miss some movements)
+  reconnect_interval:
+    name: Reconnect Interval
+    description: Seconds to wait before reconnecting on connection failure
+  enable_debug:
+    name: Enable Debug Logging
+    description: Enable detailed debug logs (may impact performance)
+  enable_mqtt_discovery:
+    name: Enable MQTT Discovery
+    description: Automatically create sensors in Home Assistant

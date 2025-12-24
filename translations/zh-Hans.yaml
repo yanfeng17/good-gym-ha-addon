@@ -1,0 +1,40 @@
+configuration:
+  rtsp_url:
+    name: RTSP 摄像头地址
+    description: 摄像头的 RTSP URL 地址（例如：rtsp://192.168.1.100:554/stream）
+  mqtt_host:
+    name: MQTT 服务器地址
+    description: MQTT 服务器的主机名或 IP 地址
+  mqtt_port:
+    name: MQTT 服务器端口
+    description: MQTT 服务器的端口号（通常为 1883）
+  mqtt_user:
+    name: MQTT 用户名
+    description: MQTT 认证用户名（如不需要请留空）
+  mqtt_password:
+    name: MQTT 密码
+    description: MQTT 认证密码（如不需要请留空）
+  mqtt_topic_prefix:
+    name: MQTT 主题前缀
+    description: MQTT 消息主题的前缀
+  exercise_type:
+    name: 运动类型
+    description: 要追踪的运动类型
+  detection_interval:
+    name: 检测间隔
+    description: 姿态检测间隔时间（秒），数值越小检测越频繁
+  rtmpose_mode:
+    name: RTMPose 模式
+    description: 检测模式（performance = 快速但精度较低，accuracy = 慢速但精度更高）
+  frame_skip:
+    name: 跳帧数
+    description: 每处理 N 帧中的一帧（数值越大 CPU 占用越低，但可能遗漏动作）
+  reconnect_interval:
+    name: 重连间隔
+    description: 连接失败后等待重连的秒数
+  enable_debug:
+    name: 启用调试日志
+    description: 启用详细的调试日志（可能影响性能）
+  enable_mqtt_discovery:
+    name: 启用 MQTT 自动发现
+    description: 在 Home Assistant 中自动创建传感器
