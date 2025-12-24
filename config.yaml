@@ -37,4 +37,3 @@ schema:
   reconnect_interval: int(1,60)
   enable_debug: bool
   enable_mqtt_discovery: bool
-image: "ghcr.io/yo-wassup/good-gym-addon-{arch}"
