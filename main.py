@@ -6,6 +6,7 @@ import sys
 import os
 import time
 import signal
+import cv2
 from typing import Optional
 
 # Add parent directory to path to import core modules
@@ -55,6 +56,7 @@ class GoodGymService:
         self.exercise_type = detection_config['exercise_type']
         self.frame_skip = detection_config['frame_skip']
         self.enable_debug = detection_config['enable_debug']
+        self.max_resolution = detection_config.get('max_resolution', 640)
     
     def initialize(self) -> bool:
         """
@@ -126,6 +128,16 @@ class GoodGymService:
                 return
             
             self.frame_count += 1
+            
+            # Resize frame if needed to reduce CPU usage
+            h, w = frame.shape[:2]
+            if w > self.max_resolution:
+                scale = self.max_resolution / w
+                new_width = int(w * scale)
+                new_height = int(h * scale)
+                frame = cv2.resize(frame, (new_width, new_height))
+                if self.enable_debug and frame_number == 1:
+                    print(f"📏 Resized frame from {w}x{h} to {new_width}x{new_height}")
             
             # Process frame with RTMPose
             processed_frame = self.rtmpose_processor.process_frame(

@@ -28,7 +28,10 @@ configuration:
     description: Detection mode (performance = fast but less accurate, accuracy = slow but more accurate)
   frame_skip:
     name: Frame Skip
-    description: Process every Nth frame (higher = lower CPU usage but may miss some movements)
+    description: Number of frames to skip between each detection (higher = lower CPU usage)
+  max_resolution:
+    name: Max Resolution
+    description: Maximum frame width for processing (lower = less CPU usage, recommended: 640)
   reconnect_interval:
     name: Reconnect Interval
     description: Seconds to wait before reconnecting on connection failure

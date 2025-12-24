@@ -27,8 +27,11 @@ configuration:
     name: RTMPose 模式
     description: 检测模式（performance = 快速但精度较低，accuracy = 慢速但精度更高）
   frame_skip:
-    name: 跳帧数
-    description: 每处理 N 帧中的一帧（数值越大 CPU 占用越低，但可能遗漏动作）
+    name: 跳帧间隔
+    description: 每次检测之间跳过的帧数（越高CPU占用越低）
+  max_resolution:
+    name: 最大分辨率
+    description: 处理帧的最大宽度（越低CPU占用越低，推荐：640）
   reconnect_interval:
     name: 重连间隔
     description: 连接失败后等待重连的秒数
