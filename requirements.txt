@@ -1,15 +1,7 @@
-# Good-GYM HA Addon Requirements
-# Compatible versions for Python 3.9 and rtmlib 0.0.14
-
-# rtmlib and its dependencies
 rtmlib>=0.0.14
 opencv-contrib-python>=4.11.0.86
 numpy<2.0,>=1.21.0
 onnxruntime>=1.10.0
 tqdm>=4.60.0
-
-# MQTT client
 paho-mqtt>=1.6.0
-
-# Image processing
 Pillow>=8.0.0
