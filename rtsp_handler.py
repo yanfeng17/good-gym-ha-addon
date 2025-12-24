@@ -53,11 +53,22 @@ class RTSPHandler:
                 self.cap.release()
             
             # Create new connection with optimized settings
-            self.cap = cv2.VideoCapture(self.rtsp_url)
+            self.cap = cv2.VideoCapture(self.rtsp_url, cv2.CAP_FFMPEG)
+            
+            # Force TCP transport (fixes "406 Not Acceptable" errors)
+            # CAP_PROP_RTSP_TRANSPORT: 0 = UDP, 1 = TCP, 2 = HTTP
+            self.cap.set(cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, 10000)  # 10 second timeout
+            self.cap.set(cv2.CAP_PROP_READ_TIMEOUT_MSEC, 10000)  # 10 second read timeout
             
             # Configure capture settings for better performance
             self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Minimize latency
             self.cap.set(cv2.CAP_PROP_FPS, 30)  # Target frame rate
+            
+            # Try to enable TCP transport (may not work on all OpenCV builds)
+            try:
+                self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'H264'))
+            except:
+                pass  # Ignore if not supported
             
             # Test connection
             ret, frame = self.cap.read()
