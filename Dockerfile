@@ -12,20 +12,27 @@ RUN apt-get update && apt-get install -y \
     libxrender-dev \
     libgomp1 \
     wget \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY homeassistant/requirements.txt /app/requirements.txt
+COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy core modules from parent project
+# Copy core modules
 COPY core/ /app/core/
 COPY data/ /app/data/
-COPY models/ /app/models/
 COPY exercise_counters.py /app/
 
 # Copy addon-specific files
-COPY homeassistant/*.py /app/
+COPY config_manager.py /app/
+COPY rtsp_handler.py /app/
+COPY mqtt_publisher.py /app/
+COPY main.py /app/
+COPY model_downloader.py /app/
+
+# Create models directory (models will be downloaded on first run)
+RUN mkdir -p /app/models
 
 # Create data directory for Home Assistant options
 RUN mkdir -p /data
